@@ -1,0 +1,84 @@
+import WidgetKit
+import SwiftUI
+
+struct Widget: Widget {
+    private let kind: String = "MyWidget"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: Provider()) { entry in
+            WidgetEntryView(entry: entry)
+        }
+        .configurationDisplayName("My Widget")
+        .description("Displays three rows of data from a database.")
+        .supportedFamilies([.systemMedium])
+    }
+}
+
+struct WidgetEntryView: View {
+    var entry: Provider.Entry
+
+    var body: some View {
+        VStack {
+            // Display the first row of data
+            HStack {
+                Text(entry.data1Label)
+                Spacer()
+                Text(entry.data1Value)
+            }
+
+            // Display the second row of data
+            HStack {
+                Text(entry.data2Label)
+                Spacer()
+                Text(entry.data2Value)
+            }
+
+            // Display the third row of data
+            HStack {
+                Text(entry.data3Label)
+                Spacer()
+                Text(entry.data3Value)
+            }
+        }
+    }
+}
+
+struct Provider: TimelineProvider {
+    typealias Entry = WidgetEntry
+
+    func snapshot(with context: Context, completion: @escaping (WidgetEntry) -> Void) {
+        let entry = WidgetEntry(date: Date(), data1Label: "Data 1", data1Value: "Value 1", data2Label: "Data 2", data2Value: "Value 2", data3Label: "Data 3", data3Value: "Value 3")
+        completion(entry)
+    }
+
+    func timeline(with context: Context, completion: @escaping (Timeline<Entry>) -> Void) {
+        var entries: [WidgetEntry] = []
+
+        // Query the database for the latest data
+        let data = queryDatabase()
+
+        // Create a widget entry for each row of data
+        for (index, row) in data.enumerated() {
+            let entry = WidgetEntry(date: Date(), data1Label: row.data1Label, data1Value: row.data1Value, data2Label: row.data2Label, data2Value: row.data2Value, data3Label: row.data3Label, data3Value: row.data3Value)
+            entries.append(entry)
+
+            // Only show the first three rows of data
+            if index == 2 {
+                break
+            }
+        }
+
+        let timeline = Timeline(entries: entries, policy: .atEnd)
+        completion(timeline)
+    }
+}
+
+struct WidgetEntry: TimelineEntry {
+    public let date: Date
+    let data1Label: String
+    let data1Value: String
+    let data2Label: String
+    let data2Value: String
+    let data3Label: String
+    let data3Value: String
+}
