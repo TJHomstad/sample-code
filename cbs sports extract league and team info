@@ -1,0 +1,45 @@
+import requests
+
+# Replace with your CBS Sports API key
+API_KEY = "your-api-key-here"
+
+# Replace with the ID of the fantasy league you want to query
+LEAGUE_ID = 123456
+
+# Set the base URL for the CBS Sports Fantasy API
+BASE_URL = "https://fantasy.cbssports.com/apis/v3/games/ffl/seasons"
+
+# Set the URL for the league endpoint
+LEAGUE_URL = f"{BASE_URL}/{LEAGUE_ID}"
+
+# Set the request headers
+headers = {
+    "Ocp-Apim-Subscription-Key": API_KEY
+}
+
+# Send a GET request to the league endpoint
+response = requests.get(LEAGUE_URL, headers=headers)
+
+# Parse the response data as JSON
+data = response.json()
+
+# Extract the league information from the response data
+league_name = data["name"]
+league_owner = data["owner"]["fullname"]
+league_start_date = data["start_date"]
+league_end_date = data["end_date"]
+
+# Output the league information
+print(f"League name: {league_name}")
+print(f"League owner: {league_owner}")
+print(f"League start date: {league_start_date}")
+print(f"League end date: {league_end_date}")
+
+# Extract the team information from the response data
+teams = data["teams"]
+for team in teams:
+    team_name = team["name"]
+    team_owner = team["owner"]["fullname"]
+    team_record = team["record"]["overall"]["summary"]
+
+    # Output the team
