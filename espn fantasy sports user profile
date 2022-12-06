@@ -1,0 +1,36 @@
+import requests
+
+# Replace with your ESPN API key
+API_KEY = "your-api-key-here"
+
+# Replace with the ID of the fantasy league you want to query
+LEAGUE_ID = 123456
+
+# Replace with the ID of the user you want to query
+USER_ID = 987654
+
+# Set the base URL for the ESPN Fantasy Sports API
+BASE_URL = "http://fantasy.espn.com/apis/v3/games/ffl/seasons"
+
+# Set the URL for the user profile endpoint
+USER_PROFILE_URL = f"{BASE_URL}/{LEAGUE_ID}/segments/0/leagues/{LEAGUE_ID}?view=mMatchupScore"
+
+# Set the request headers
+headers = {
+    "Ocp-Apim-Subscription-Key": API_KEY
+}
+
+# Send a GET request to the user profile endpoint
+response = requests.get(USER_PROFILE_URL, headers=headers)
+
+# Parse the response data as JSON
+data = response.json()
+
+# Extract the user profile information from the response data
+user_data = data["teams"][USER_ID]
+user_name = user_data["location"] + " " + user_data["nickname"]
+user_points = user_data["record"]["overall"]["points"]
+
+# Output the user profile information
+print(f"User: {user_name}")
+print(f"Points: {user_points}")
